@@ -1,0 +1,7 @@
+# 洛克王国每周禁赛抓取 + API 项目依赖
+# 安装命令：python -m pip install -r requirements.txt
+
+requests          # 发送 HTTP 请求抓取官网页面
+beautifulsoup4    # 解析 HTML，提取公告列表与禁赛名单
+fastapi           # 提供 REST API 的 Web 框架
+uvicorn           # ASGI 服务器，用于运行 FastAPI（含标准依赖）

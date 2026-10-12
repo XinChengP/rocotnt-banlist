@@ -1,0 +1,36 @@
+# ============ Python 相关 ============
+# Python 字节码缓存，由解释器自动生成，不应提交
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ============ 本项目的数据文件 ============
+# SQLite 数据库：属于运行时产生的本地数据，且可能含抓取记录，不入库
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# ============ Cloudflare Workers / wrangler 相关 ============
+# .wrangler 目录由 wrangler 自动生成，其中 cache/wrangler-account.json
+# 会记录登录账号信息（属于个人隐私），必须忽略
+.wrangler/
+# 本地开发用的环境变量文件（可能含密钥），一律忽略
+.dev.vars
+.env
+.env.*
+
+# ============ 编辑器 / 系统文件 ============
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+
+# ============ 临时文件 ============
+tmp_*
+*.tmp
+*.log

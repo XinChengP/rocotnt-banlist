@@ -1,0 +1,37 @@
+# Cloudflare Workers 部署配置
+# 使用方式：在本目录（cf-worker）执行 npx wrangler deploy
+
+name = "roco-ban-api"          # Worker 名称，部署后会成为 roco-ban-api.<你的子域>.workers.dev
+main = "src/index.js"          # 入口文件
+# 兼容日期：必须 >= 2026-03-03。
+# 从该版本起 TextDecoder 默认启用 CJK 解码器，才能正确解码官网 gb18030 页面
+# （包含“翾”“螣”这类生僻字），否则中文会乱码。
+compatibility_date = "2026-03-03"
+
+# KV 命名空间绑定：代码里通过 env.ROCO_BAN 访问这个键值存储。
+# 使用前请先执行下面的命令创建自己的命名空间，再把返回的 id 填到下面（请勿提交真实 id）：
+#   npx wrangler kv namespace create ROCO_BAN
+[[kv_namespaces]]
+binding = "ROCO_BAN"
+id = "<你的KV命名空间ID>"
+
+# 定时任务（Cron Triggers）。
+# 表达式为 5 段式：分 时 日 月 周。
+# 这里 "0 16 * * 3" 表示每周三 16:00 UTC，换算成北京时间就是每周四 00:00。
+# 为什么这样排：官网公告的更新时间只能确定在“周三”，具体到几点并不固定；
+# 若在周三白天抓，可能公告还没出，会漏掉当期。改到北京时间周四 0 点，
+# 此时周三全天已过完，最新一期公告必定已经发布，抓取最稳妥。
+# 注意 Cron 用的是 UTC 时间，北京时间要减去 8 小时：周四 00:00 - 8h = 周三 16:00。
+[triggers]
+crons = ["0 16 * * 3"]
+
+# 自定义域名绑定（可选）。
+# 原因：默认的 *.workers.dev 域名在国内几乎无法访问，可换成自己的域名。
+# custom_domain = true 表示这是一个「自定义域名」，部署时 Cloudflare 会自动：
+#   1) 在你的域名下创建一条 DNS 记录（CNAME 指向本 Worker）
+#   2) 自动签发并续期 HTTPS 证书（无需手动配置证书）
+# 前提：你的域名必须已经接入 Cloudflare（NS 指向 Cloudflare）。
+# 不需要自定义域名时，把下面这段 [[routes]] 整段删除即可。
+[[routes]]
+pattern = "<你的自定义域名，例如 api.example.com>"
+custom_domain = true
